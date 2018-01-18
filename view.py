@@ -150,21 +150,12 @@ def full_chain():
 
 @app.route('/transactions/new', methods=['POST'])
 def new_transactions():
-    # check required fields
     values = request.get_json()
     required = ('sender', 'recipient', 'amount')
     if not all(k in values for k in required):
         return 'Missing values', 400
 
-    # run the proof of work algorithm
-    last_block = blockchain.last_block
-    last_proof = last_block['proof']
-    proof = blockchain.proof_of_work(last_proof)
-
-    # create a new transaction
     index = blockchain.new_transaction(values['sender'], values['recipient'], values['amount'])
-    blockchain.new_block(proof)
-
     response = {'message': 'Transaction will be added to Block {}'.format(index)}
     return jsonify(response), 201
 
